@@ -28,14 +28,15 @@ define(['http'], function(Http) {
             'js/object': {label: 'generic object', renderers: ['object-tree']},
             'js/workbook': {label: 'spreadsheet workbook', filter: 'workbook-to-dataset'},
             'text/csv': {label: 'CSV', filter: 'csv-parser', renderers: ['text']},
-            'text/flowchart': {label: 'flowchart', renderers: ['flowchart']},
             'text/html': {label: 'HTML', filter: 'html-parser', renderers: ['text']},
             'text/javascript': {label: 'javascript', renderers: ['text']},
             'text/plain': {label: 'text', renderers: ['text']},
-            'text/uml-sequence': {label: 'sequence diagram', renderers: ['uml-sequence']},
             'text/sql': {label: 'SQL dump', filter: 'sql-parser', renderers: ['text']},
             'text/tab-separated-values': {label: 'TSV', filter: 'tsv-parser', renderers: ['text']},
-            'text/vnd.graphviz': {label: 'DOT syntax', renderers: ['graph']},
+            'text/vnd.flowchartjs': {label: 'flowchart.js syntax', renderers: ['flowchart']},
+            'text/vnd.graphviz': {label: 'Graphviz DOT syntax', renderers: ['graph']},
+            'text/vnd.plantuml.sequence': {label: 'PlantUML sequence diagram', renderers: ['uml-sequence']},
+            'text/x-railroad-diagram': {label: 'Railroad diagram', renderers: ['railroad-diagram']},
             'text/xml': {label: 'XML', filter: 'xml-parser', renderers: ['text']},
             'text/yaml': {label: 'YAML', filter: 'yaml-parser', renderers: ['text']},
         },
@@ -238,7 +239,7 @@ define(['http'], function(Http) {
             var bundles = (config.filters || []).reduce(function(requires, filter) {
                     var bundle = filters[filter.type].bundle;
                     if (bundle) {
-                        var filename = '/assets/got-data/data-filters/'+bundle+'.js';
+                        var filename = '/assets/got-data/dev/data-filters/'+bundle+'.js';
                         if (!requires[filename]) requires[filename] = [];
                         requires[filename].push(filter.type);
                     }
@@ -338,7 +339,8 @@ define(['http'], function(Http) {
             'lines': 'timeplot',
             'uml-sequence': 'sequence diagram',
             'flowchart': 'flow chart',
-            'graph': 'graph'
+            'graph': 'graph',
+            'railroad-diagram': 'Railroad diagram'
         }
     };
 });
