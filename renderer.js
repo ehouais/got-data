@@ -197,21 +197,14 @@ define([], function() {
                     });
                     require(['diagram'], function(Diagram) {
                         $viz.innerHTML = '';
+                        // Allow creating a function with arguments list only available at runtime
                         var newFunction = function(params, body) {
                                 return new (Function.prototype.bind.apply(Function, [null].concat(params, [body])));
                             };
-
+                        // Add Diagram member functions to local scope by using them as args of a dynamically created function (to avoid using 'with')
                         var scopedEval = newFunction(Object.keys(Diagram).concat(['data']), 'return eval(data)');
-                        var diagram = scopedEval.apply(this, Object.values(Diagram).concat(data));
-                        /*// Don't know how to eval data in Diagram scope without using 'with'
-                        (function(obj) {
-                            // Put Diagram member functions in global scope
-                            for (var name in obj) {
-                                window[name] = obj[name];
-                            }
-                            eval(data).format().addTo($viz);
-                        })(Diagram);*/
-                        diagram.format().addTo($viz);
+                        // Eval given syntax in 'Diagram' library scope
+                        scopedEval.apply(this, Object.values(Diagram).concat(data)).format().addTo($viz);
                         resizableSvg($viz.firstChild);
                     });
                 }
