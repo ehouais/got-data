@@ -167,6 +167,26 @@ define([], function() {
                         diagram.drawSVG('flowchart');
                         resizableSvg($viz.firstChild);
                     });
+                } else if (vizType == 'graph') {
+                    require.config({
+                        baseUrl: path,
+                        paths: {
+                            d3: '/assets/d3/4.2.8/d3.min',
+                            'dot-checker': '/assets/graph-viz-d3/0.9.50/dot-checker',
+                            'layout-worker': '/assets/graph-viz-d3/0.9.50/layout-worker',
+                            worker: '/assets/requirejs-web-workers/1.0.1/worker',
+                            renderer: '/assets/graph-viz-d3/0.9.50/renderer'
+                        }
+                    });
+                    require(['renderer'], function(renderer) {
+                        $viz.innerHTML = '';
+                        $viz.setAttribute('id', 'graph');
+                        renderer.init('#graph');
+                        renderer.renderHandler(function() {
+                            resizableSvg($viz.firstChild);
+                        });
+                        renderer.render(data);
+                    });
                 }
                 setFontSize();
             },

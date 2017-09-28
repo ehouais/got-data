@@ -35,6 +35,7 @@ define(['http'], function(Http) {
             'text/uml-sequence': {label: 'sequence diagram', renderers: ['uml-sequence']},
             'text/sql': {label: 'SQL dump', filter: 'sql-parser', renderers: ['text']},
             'text/tab-separated-values': {label: 'TSV', filter: 'tsv-parser', renderers: ['text']},
+            'text/vnd.graphviz': {label: 'DOT syntax', renderers: ['graph']},
             'text/xml': {label: 'XML', filter: 'xml-parser', renderers: ['text']},
             'text/yaml': {label: 'YAML', filter: 'yaml-parser', renderers: ['text']},
         },
@@ -336,7 +337,8 @@ define(['http'], function(Http) {
             'map': 'map',
             'lines': 'timeplot',
             'uml-sequence': 'sequence diagram',
-            'flowchart': 'flow chart'
+            'flowchart': 'flow chart',
+            'graph': 'graph'
         }
     };
 });
