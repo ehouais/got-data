@@ -314,7 +314,7 @@ define(['http'], function(Http) {
         proxyFetch: function(uri, cb) { // cb = f(body, status, headers)
             // proxify non-local URIs
             if (!uri.match(/https?:\/\/[^\/]*(localhost|local|127\.0\.0\.1)/)) {
-                uri = 'proxy?url='+uri;
+                uri = '/proxy?url='+encodeURIComponent(uri);
             }
             Http.get(uri, function(body, status, headers) {
                 var type = headers['Content-Type'].trim().split(';')[0];
