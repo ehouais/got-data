@@ -317,7 +317,7 @@ define(['http'], function(Http) {
                 uri = '/proxy?url='+encodeURIComponent(uri);
             }
             Http.get(uri, function(body, status, headers) {
-                var type = headers['Content-Type'].trim().split(';')[0];
+                var type = headers['content-type'].trim().split(';')[0];
                 cb({
                     value: arrayBufferToString(body, type),
                     type: type
