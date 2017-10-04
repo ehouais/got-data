@@ -115,14 +115,14 @@ define(['ui-utils'], function($) {
         'select-columns': {
             process: function(dataset) {
                 if (this.indices) {
-                    var indices = this.indices.split(',');
+                    var indices = this.indices;
                     dataset = {
                         cols: indices.map(function(index) {
-                            return dataset.cols[index-1];
+                            return dataset.cols[index];
                         }),
                         rows: dataset.rows.map(function(row) {
                             return indices.map(function(index) {
-                                return row[index-1];
+                                return row[index];
                             });
                         })
                     }
@@ -130,9 +130,10 @@ define(['ui-utils'], function($) {
                 return dataset;
             },
             indices: function(dataset) {
-                return {default: dataset.cols.map(function(col, i) {
-                    return i+1;
-                }).join(',')};
+                return {
+                    options: dataset.cols.map(function(col) { return col.label; }),
+                    default: dataset.cols.map(function(col, i) { return i; })
+                };
             }
         },
         'select-rows': {

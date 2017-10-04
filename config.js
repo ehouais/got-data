@@ -172,7 +172,7 @@ define(['http'], function(Http) {
                 in: 'js/dataset',
                 out: 'js/dataset',
                 params: {
-                    indices: {type: 'string'}
+                    indices: {type: 'array'}
                 },
                 bundle: 'dataset-filters'
             },
