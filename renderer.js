@@ -41,9 +41,8 @@ define([], function() {
 
         return {
             render: function(vizType, data, title) {
-                if (title) {
-                    $title.textContent = title;
-                }
+                $title.textContent = title ? title.trim() : '';
+
                 if (previous) $viz.classList.remove(previous);
                 $viz.classList.add(previous = vizType);
                 if (['vbars', 'hbars', 'pie', 'lines', 'diagram', 'map'].indexOf(vizType) != -1) {
