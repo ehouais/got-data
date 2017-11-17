@@ -29,12 +29,11 @@ define([], function() {
                 $title.style.fontSize = $container.offsetHeight/20+'px';
             };
 
+        $container.innerHTML = '';
         $container.style.display = 'flex';
         $container.style.flexDirection = 'column';
-        //$title.classList.add('title');
         $title.style.textAlign = 'center';
         $container.appendChild($title);
-        //$viz.classList.add('viz');
         $viz.style.flex = 1;
         $viz.style.overflow = 'hidden';
         $container.appendChild($viz);
@@ -45,12 +44,73 @@ define([], function() {
 
                 if (previous) $viz.classList.remove(previous);
                 $viz.classList.add(previous = vizType);
-                if (['vbars', 'hbars', 'pie', 'lines', 'diagram', 'map'].indexOf(vizType) != -1) {
+                if (['hbars', 'vbars', 'pie', 'lines'].indexOf(vizType) != -1) {
+                    require.config({
+                        baseUrl: path,
+                        paths: {
+                            d3v3: '/assets/d3/3.5.5/d3.min', // v3 mandatory
+                            nvd3: '/assets/nvd3/1.8.6/nv.d3.min',
+                        },
+                        shim: {
+                            nvd3: {deps: ['d3v3'], exports: 'nv'}
+                        }
+                    });
+                    loadCss('/assets/nvd3/1.8.6/nv.d3.min.css');
+                    require(['d3v3', 'nvd3'], function(d3, nv) {
+                        var series = function(table) {
+                                return table.cols.slice(1).map(function(col, i) {
+                                    return {
+                                        key: col.label,
+                                        values: table.rows.map(function(row) {
+                                            return [row[0], row[i+1]];
+                                        })
+                                    };
+                                });
+                            };
+
+                        $viz.setAttribute('id', 'nvd3');
+                        $viz.innerHTML = '';
+
+                        nv.addGraph(function() {
+                            var chart,
+                                vizdata;
+
+                            if (vizType == 'hbars') {
+                                chart = nv.models.multiBarHorizontalChart();
+                                vizdata = series(data);
+                            } else if (vizType == 'vbars') {
+                                chart = nv.models.multiBarChart()
+                                    .reduceXTicks(false);
+                                vizdata = series(data);
+                            } else if (vizType == 'pie') {
+                                chart = nv.models.pieChart()
+                                    .labelsOutside(true);
+                                vizdata = data.rows;
+                            } else if (vizType == 'lines') {
+                                chart = nv.models.lineChart();
+                                vizdata = series(data);
+                            }
+
+                            chart
+                                .x(function(d) { return d[0]; })
+                                .y(function(d) { return d[1]; })
+                                .showLegend(data.cols.length > 2)
+                                .duration(0);
+                            if (chart.showValues) chart.showValues(true);
+                            if (chart.showControls) chart.showControls(false);
+
+                            d3.select('#nvd3').append('svg').datum(vizdata).call(chart);
+                            nv.utils.windowResize(chart.update);
+
+                            return chart;
+                            // TODO: check tooltip div lifecycle
+                        });
+                    });
+                } else if (['diagram', 'map'].indexOf(vizType) != -1) {
                     var path = '/assets/charts/0.3.2';
                     require.config({
                         baseUrl: path,
                         paths: {
-                            d3: '/assets/d3/4.2.8/d3.min',
                             leaflet: '/assets/leaflet/1.0.3/leaflet',
                             'snap.svg': '/assets/snap.svg/0.4.1/snap.svg-min'
                         },
@@ -59,15 +119,10 @@ define([], function() {
                         }
                     });
                     $viz.innerHTML = '';
-                    ({
-                        hbars: [path+'/condensed-font.css', path+'/hbars/default.css'],
-                        lines: [path+'/condensed-font.css', path+'/lines/default.css'],
-                        map: ['/assets/leaflet/1.0.3/leaflet.css', path+'/map/default.css'],
-                        pie: [path+'/condensed-font.css', path+'/pie/default.css'],
-                        vbars: [path+'/condensed-font.css', path+'/vbars/default.css']
-                    })[vizType].forEach(function(url) {
-                        loadCss(url);
-                    });
+                    if (vizType == 'map') {
+                        loadCss('/assets/leaflet/1.0.3/leaflet.css');
+                        loadCss(path+'/map/default.css');
+                    }
                     require([vizType+'/chart'], function(Chart) {
                         var chart = Chart($viz, {margin: 0.05});
                         chart.update(data);
@@ -135,7 +190,6 @@ define([], function() {
                             'sequence-diagram': '/assets/js-sequence-diagrams/2.0.1/sequence-diagram'
                         },
                         shim: {
-                            //webfont: {exports: 'WebFont'},
                             underscore: {exports: '_'},
                             'sequence-diagram': {exports: 'Diagram', deps: ['webfont', 'snap.svg', 'underscore']},
                         }

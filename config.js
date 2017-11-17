@@ -336,7 +336,7 @@ define(['http'], function(Http) {
             'hbars': 'horizontal bar chart',
             'pie': 'pie chart',
             'map': 'map',
-            'lines': 'timeplot',
+            'lines': 'line chart',
             'uml-sequence': 'sequence diagram',
             'flowchart': 'flow chart',
             'graph': 'graph',
